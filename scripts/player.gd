@@ -55,7 +55,7 @@ func _physics_process(delta):
 			move_and_slide()
 			return
 	if is_wall_jumping:
-		print(str(wall_jump_time_tracker))
+		#print(str(wall_jump_time_tracker))
 		wall_jump_time_tracker += delta
 		if wall_jump_time_tracker > wall_jump_time:
 			is_wall_jumping = false
