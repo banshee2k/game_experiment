@@ -1,0 +1,67 @@
+[gd_scene load_steps=6 format=3 uid="uid://cntsup2n5x0f0"]
+
+[ext_resource type="Script" path="res://scripts/Camera2D.gd" id="1_njqya"]
+[ext_resource type="PackedScene" uid="uid://cq68xcoah4ty8" path="res://scenes/room.tscn" id="1_oewl5"]
+[ext_resource type="PackedScene" uid="uid://wvjaeyrpings" path="res://scenes/player.tscn" id="2_1ma55"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_rjli6"]
+size = Vector2(200, 200)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7mql3"]
+size = Vector2(616, 69)
+
+[node name="World" type="Node2D"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(-1, -1)
+position_smoothing_enabled = true
+position_smoothing_speed = 10.0
+script = ExtResource("1_njqya")
+
+[node name="Room" parent="." instance=ExtResource("1_oewl5")]
+position = Vector2(-2, -2)
+scale = Vector2(1.5, 1.5)
+
+[node name="Platform2" type="StaticBody2D" parent="Room"]
+position = Vector2(-315, -166)
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="Room/Platform2"]
+position = Vector2(320, 305.5)
+scale = Vector2(3.07, 0.355)
+mesh = SubResource("QuadMesh_rjli6")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Room/Platform2"]
+position = Vector2(319, 306.5)
+shape = SubResource("RectangleShape2D_7mql3")
+
+[node name="Platform3" type="StaticBody2D" parent="Room"]
+position = Vector2(-575.333, 178)
+rotation = -1.57079
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="Room/Platform3"]
+position = Vector2(320, 305.5)
+scale = Vector2(3.07, 0.355)
+mesh = SubResource("QuadMesh_rjli6")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Room/Platform3"]
+position = Vector2(319, 306.5)
+shape = SubResource("RectangleShape2D_7mql3")
+
+[node name="Room2" parent="." instance=ExtResource("1_oewl5")]
+position = Vector2(968, -1)
+scale = Vector2(1.5, 1.5)
+
+[node name="Platform2" type="StaticBody2D" parent="Room2"]
+position = Vector2(-325, -233)
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="Room2/Platform2"]
+position = Vector2(320, 305.5)
+scale = Vector2(3.07, 0.355)
+mesh = SubResource("QuadMesh_rjli6")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Room2/Platform2"]
+position = Vector2(319, 306.5)
+shape = SubResource("RectangleShape2D_7mql3")
+
+[node name="Player" parent="." instance=ExtResource("2_1ma55")]
+position = Vector2(-45, 5)

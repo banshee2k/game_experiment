@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://cq68xcoah4ty8"]
+
+[ext_resource type="Script" path="res://scripts/room.gd" id="1_s1rsc"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3pvnu"]
+size = Vector2(639, 357)
+
+[node name="Room" type="Node2D"]
+script = ExtResource("1_s1rsc")
+
+[node name="player detect" type="Area2D" parent="."]
+position = Vector2(-322, -181)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="player detect"]
+position = Vector2(321.5, 180.5)
+shape = SubResource("RectangleShape2D_3pvnu")
+
+[connection signal="body_entered" from="player detect" to="." method="_on_player_detect_body_entered"]
