@@ -71,7 +71,6 @@ func _physics_process(delta):
 			velocity.y=MAX_FALL_SPEED
 	elif not is_on_floor() and is_on_wall():
 		arbitrary_tracker += delta
-		print("on wall "+str(Vector2(Input.get_axis("move_left", "move_right"),0).normalized()) +" and "+str(get_wall_normal()))
 		velocity.y += get_gravity() * delta * 0.5
 		if velocity.y > MAX_FALL_SPEED/5.0:
 			velocity.y=MAX_FALL_SPEED/5.0
