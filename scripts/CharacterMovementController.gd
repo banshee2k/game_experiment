@@ -24,6 +24,7 @@ var move_cooldown:Vector2 = Vector2(0.,0.);
 var dashIsActive:bool = false;
 var dashRemaining:int = 0;
 var motion:= Vector2.ZERO;
+var dashInitVelo = Vector2.ZERO;
 
 var _old_position := Vector2.ZERO;
 
@@ -85,8 +86,27 @@ func _physics_process(delta: float) -> void:
 	rightWall  = test_move(transform, Vector2(CharacterMovement.Wall_SafeMargin,0));
 	leftWall  = test_move(transform, Vector2(-CharacterMovement.Wall_SafeMargin,0));
 	onWall = rightWall || leftWall;
-	
+	#print(str(onFloor))
 	onEdge = !test_move(global_transform.translated(Vector2(CharacterMovement.EdgeCheckDistance*_last_turned_dir,1)), Vector2(0,1))
+	
+	if dashIsActive:
+		if velocity.length() < CharacterMovement.Speed * physicsfps:
+			dashIsActive = false;
+			print(str(velocity.length()))
+			onDashFinished.emit();
+		else:
+			velocity = cVelocity
+			_rem_coyoto_time = move_toward(_rem_coyoto_time, 0,delta)
+			_rem_jumpbuffer = move_toward(_rem_jumpbuffer, 0,delta)
+			CalcCornerCorrection()
+			move_and_slide()
+			cVelocity = velocity;
+			cVelocity *= 0.95;
+			print(str(velocity.length()))
+			return
+	
+	motion = global_position - _old_position;
+	_old_position = global_position;
 	
 	if sign(CharacterVelocity.x) != 0 && _last_turned_dir != sign(CharacterVelocity.x) && sign(CharacterVelocity.x) != sign(velocity.x):
 		_last_turned_dir = sign(CharacterVelocity.x);
@@ -165,6 +185,7 @@ func _HandleJump() -> void:
 	# Jump Pressed
 	if jumpingPressed > 0 || _rem_jumpbuffer > 0:
 		if onFloor || _rem_coyoto_time > 0:
+			print("floor jump")
 			var is_buffered:bool = _rem_jumpbuffer > 0;
 			_last_jump_type = 1;
 			_rem_coyoto_time = 0;
@@ -175,6 +196,7 @@ func _HandleJump() -> void:
 				_rem_jumpbuffer = 0;
 		else: 
 			if onWall && velocity.y > 0:
+				print("wall jump")
 				_last_jump_type = 2;
 				var offset = CharacterMovement.Wall_JumpOffsetMin if CharacterVelocity.x == 0 else CharacterMovement.Wall_JumpOffset;
 				var jumph = CharacterMovement.Wall_JumpHeightMin if CharacterVelocity.x == 0 else CharacterMovement.Wall_JumpHeight;
@@ -260,23 +282,46 @@ func CalcCornerCorrection() -> void:
 
 
 func Dash(direction:float):
-		dashRemaining -= 1;
-		var multiplier:Vector2 = Vector2.ONE;
-		var _d = round(rad_to_deg(direction))
-		if _d == 0: multiplier.x = CharacterMovement.Dash_right_scale;
-		elif _d == 180: multiplier.x = CharacterMovement.Dash_left_scale;
-		elif _d == -90: multiplier.y = CharacterMovement.Dash_up_scale;
-		elif _d >= -90-45 && _d <= -90+45: multiplier.y = CharacterMovement.Dash_diag_scale;
-		elif _d == 90: multiplier.y = CharacterMovement.Dash_down_scale;
-		var speed = Vector2.RIGHT.rotated((direction) );
-		cVelocity = speed * CharacterMovement.Dash_Strength * multiplier * physicsfps;
-		deactive_input = CharacterMovement.Dash_input_cooldown;
-		move_cooldown = Vector2(.5, 1) * CharacterMovement.Dash_input_cooldown;
-		dashIsActive = true;
-		onDash.emit();
-		await get_tree().create_timer(CharacterMovement.Dash_Strength * CharacterMovement.Dash_input_cooldown).timeout;
-		dashIsActive = false;
-		onDashFinished.emit();
-
+	dashRemaining -= 1;
+	
+	var multiplier:Vector2 = Vector2.ONE;
+	var _d = round(rad_to_deg(direction))
+	if _d == 0: multiplier.x = CharacterMovement.Dash_right_scale;
+	elif _d == 180: multiplier.x = CharacterMovement.Dash_left_scale;
+	elif _d == -90: multiplier.y = CharacterMovement.Dash_up_scale;
+	elif _d >= -90-45 && _d <= -90+45: multiplier.y = CharacterMovement.Dash_diag_scale;
+	elif _d == 90: multiplier.y = CharacterMovement.Dash_down_scale;
+	var speed = Vector2.RIGHT.rotated((direction) );
+	cVelocity = speed * CharacterMovement.Dash_Strength * multiplier * physicsfps;
+	deactive_input = CharacterMovement.Dash_input_cooldown;
+	move_cooldown = Vector2(.5, 1) * CharacterMovement.Dash_input_cooldown;
+	dashIsActive = true;
+	onDash.emit();
+	await get_tree().create_timer(CharacterMovement.Dash_Strength * CharacterMovement.Dash_input_cooldown).timeout;
+	dashIsActive = false;
+	onDashFinished.emit();
+		
+func modDash(direction:float):
+	dashRemaining -= 1;
+	print("dashed")
+	var multiplier:Vector2 = Vector2.ONE;
+	var _d = round(rad_to_deg(direction))
+	if _d == 0: multiplier.x = CharacterMovement.Dash_right_scale;
+	elif _d == 180: multiplier.x = CharacterMovement.Dash_left_scale;
+	elif _d == -90: multiplier.y = CharacterMovement.Dash_up_scale;
+	elif _d >= -90-45 && _d <= -90+45: multiplier.y = CharacterMovement.Dash_diag_scale;
+	elif _d == 90: multiplier.y = CharacterMovement.Dash_down_scale;
+	var speed = Vector2.RIGHT.rotated((direction) );
+	cVelocity = speed * CharacterMovement.Dash_Strength * multiplier * physicsfps;
+	velocity = cVelocity
+	dashInitVelo = cVelocity
+	#deactive_input = CharacterMovement.Dash_input_cooldown;
+	#move_cooldown = Vector2(.5, 1) * CharacterMovement.Dash_input_cooldown;
+	dashIsActive = true;
+	onDash.emit();
+	#await get_tree().create_timer(CharacterMovement.Dash_Strength * CharacterMovement.Dash_input_cooldown).timeout;
+	#dashIsActive = false;
+	#onDashFinished.emit();
+	
 func CanDash() -> bool:
 	return dashRemaining > 0;

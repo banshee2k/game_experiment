@@ -12,7 +12,7 @@ const scaling = 2.
 ## Character acceleration curve 
 @export var Acceleration = .28 * scaling * 1;
 ## Character friction curve 
-@export var Friction = .337 * scaling;
+@export var Friction = .337 * scaling * 2 ;
 ## acceleration value when the character goes in the opposite direction
 @export var TurnSpeed:float = .56 * scaling * 2;
 
@@ -34,7 +34,7 @@ const scaling = 2.
 ## control value in air
 @export var AirControl:float = .85;
 ## friction value in air
-@export var AirBrake:float = .25;
+@export var AirBrake:float = .25 * 2;
 @export_group("Jumping")
 ## how high the character jumps
 @export var JumpHeight:float = 4.5 * scaling * 1.5;

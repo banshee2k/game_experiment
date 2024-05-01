@@ -9,10 +9,10 @@ extends CharacterMovementController
 @export var JUMP_TIME_DECENT = 0.26
 @export var VARIABLE_JUMP_HEIGHT = 220
 
-@onready var JUMP_VELOCITY = ((2.0 * JUMP_HEIGHT) / JUMP_TIME_PEAK) * -1.0
-@onready var JUMP_GRAVITY  = ((-2.0 * JUMP_HEIGHT) / (JUMP_TIME_PEAK * JUMP_TIME_PEAK)) * -1.0
-@onready var VARIABLE_JUMP_GRAVITY  = ((JUMP_VELOCITY * JUMP_VELOCITY) / (2.0 * VARIABLE_JUMP_HEIGHT))
-@onready var FALL_GRAVITY  = ((-2.0 * JUMP_HEIGHT) / (JUMP_TIME_DECENT * JUMP_TIME_DECENT)) * -1.0
+#@onready var JUMP_VELOCITY = ((2.0 * JUMP_HEIGHT) / JUMP_TIME_PEAK) * -1.0
+#@onready var JUMP_GRAVITY  = ((-2.0 * JUMP_HEIGHT) / (JUMP_TIME_PEAK * JUMP_TIME_PEAK)) * -1.0
+#@onready var VARIABLE_JUMP_GRAVITY  = ((JUMP_VELOCITY * JUMP_VELOCITY) / (2.0 * VARIABLE_JUMP_HEIGHT))
+#@onready var FALL_GRAVITY  = ((-2.0 * JUMP_HEIGHT) / (JUMP_TIME_DECENT * JUMP_TIME_DECENT)) * -1.0
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
@@ -60,9 +60,9 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed("dash") && CanDash():
 		## If the movement buttons are not pressed, dash in the direction he is looking.
 		var _dir = Vector2(characterDirection, 0) if input == Vector2.ZERO else input;
-		Dash((_dir.angle()));
-
-		OS.delay_msec(30)	
+		#Dash((_dir.angle()));
+		modDash((_dir.angle()));
+		#OS.delay_msec(30)	
 	
 	super._physics_process(delta);
 	##print("Dashing: "+str(dashing)+"  dashing_time_tracker: " + str(dashing_time_tracker))
